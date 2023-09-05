@@ -1,6 +1,6 @@
 import pandas as pd
 
-class duration():
+class duration_tracker():
 	'''
 		Tracker to measure multiple different timestamps, starting and stopping at various points
 		Use the same identifier to link the start/stop times together
