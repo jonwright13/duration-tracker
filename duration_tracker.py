@@ -1,44 +1,53 @@
-import pandas as pd
+from datetime import datetime
 
-class duration_tracker():
+class Timer():
+
+    '''
+    Tracker to measure multiple different timestamps, starting and stopping at various points
+    Use the same identifier to link the start/stop times together
+
+    Methods:
+        ► Start: Initialise the stopwatch | Identifier = String text
+        ► end: Stop the stopwatch | Identifier = String text
+        ► Results: Calculate the duration from all start/stop timestamps and return the results table
+
 	'''
-		Tracker to measure multiple different timestamps, starting and stopping at various points
-		Use the same identifier to link the start/stop times together
 
-		Methods:
-			► Start: Initialise the stopwatch | Identifier = String text
-			► end: Stop the stopwatch | Identifier = String text
-			► Results: Calculate the duration from all start/stop timestamps and return the results table
+    def __init__(self):
+        self.timers = {}
 
-	'''
+    def start(self, identifier):
+        '''
+        Initialise a timer and update the dict
+        Param: identifier (str) | Name for the specific time
+        '''
+        if self.timers.get(identifier) is None:
+            self.timers.update({identifier: {'start': datetime.now()}})
+        else:
+            raise KeyError(f"The timer '{identifier}' already exists. Choose a new name")
 
-	duration_columns = ["Action", "Duration", "Start Time", "End Time"]
-	duration_df = pd.DataFrame(columns=duration_columns)
+    def end(self, identifier):
+        '''
+        End a timer and update the dict
+        Param: identifier (str) | Name for the specific time. Must already exist
+        '''
+        if self.timers.get(identifier) is not None:
+            self.timers[identifier].update({'end': datetime.now()})
+            self._parse_duration(identifier)
+        else:
+            raise KeyError(f"The timer '{identifier}' has not been initialised yet")
 
-	def start(self, identifier):
-    # Start timer for specific identifier name
-		timestamp = pd.Timestamp.now()
-		data = {
-                "Action": identifier, 
-                "Duration": float(0), 
-                "Start Time": timestamp, 
-                "End Time": float(0)
-                }
+    def _parse_duration(self, identifier):
+        '''
+        Calculate duration and update the dict
+        Param: identifier (str) | Name for the specific time. Must already exist
+        '''
+        delta = self.timers[identifier]['end'] - self.timers[identifier]['start']
+        self.timers[identifier].update({'duration': delta.total_seconds()})
 
-		self.duration_df = self.duration_df.append(data,ignore_index=True)
-
-	def end(self, identifier):
-    # End timer for specific identifier
-		timestamp = pd.Timestamp.now()
-		index = self.duration_df.index[self.duration_df["Action"] == identifier]
-
-		self.duration_df.at[index, "End Time"] = timestamp
-		self.duration_df.at[index, "Duration"] = timestamp - self.duration_df.iloc[index]["Start Time"]
-
-	def results(self):
-    # Display results for all timers
-		self.duration_df["Duration"] = self.duration_df.apply(lambda row: pd.Timedelta(row["Duration"]).total_seconds(), axis=1)
-		return self.duration_df[["Action", "Duration"]]
-
-if __name__ == '__main__':
-    pass
+    def results(self):
+        '''
+        Calculates the durations and returns a dict featuring the name of the timer and duration
+        in seconds
+        '''
+        return {k: str(f"{v['duration']}s") for k,v in self.timers.items()}
