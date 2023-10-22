@@ -29,7 +29,7 @@ timer.start('Timer 1')
 timer.start('Timer 2')
 timer.start('Timer 3')
 
-# End each of the timers after
+# End each of the timers after (time.sleep() shown here)
 sleep(1)
 timer.end('Timer 1')
 sleep(1)
