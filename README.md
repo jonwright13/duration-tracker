@@ -18,7 +18,7 @@ To show results: `T.results(identifier_name)`
 
 ## Example
 
-'''python
+```python
 from duration_tracker import Timer
 
 # Initialise timer object
@@ -39,5 +39,5 @@ timer.end('Timer 3')
 
 # Results method used to get a dictionary of each timer and the duration in seconds
 results = timer.results()
-'''
+``````
 
